@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Trắc nghiệm Tin 8 — Giữa kì 1</title>
+
+  <!-- Google Fonts: body + chút cách điệu cho tiêu đề -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #cce7ff;          /* nền xanh da trời nhạt */
+      --card: #ffffff;
+      --accent: #0b6b3a;      /* xanh lá cho đúng */
+      --wrong: #ff5c5c;       /* đỏ cho sai */
+      --note-pink: #ff66b2;   /* hồng cánh sen cho note */
+      --muted: #6b6b6b;
+      --max-width: 980px;
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      color:#1a1a1a;
+    }
+
+    .container{
+      max-width: var(--max-width);
+      margin:28px auto;
+      padding:28px;
+      box-sizing:border-box;
+    }
+
+    header.app-header{
+      text-align:center;
+      margin-bottom:18px;
+    }
+
+    header .title{
+      font-family: "Dancing Script", "Poppins", sans-serif;
+      font-size:34px;
+      margin:0;
+      letter-spacing:0.5px;
+      color:#073b2d;
+    }
+    header .subtitle{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    main.card{
+      background: var(--card);
+      border-radius:16px;
+      box-shadow: 0 8px 28px rgba(3,22,45,0.08);
+      padding:20px;
+    }
+
+    .top-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+    }
+
+    .result-panel{
+      background: linear-gradient(90deg, rgba(12,86,53,0.06), rgba(12,86,53,0.02));
+      padding:12px 14px;
+      border-radius:10px;
+      min-width:240px;
+    }
+
+    .result-panel h3{
+      margin:0;
+      font-size:16px;
+      color: #073b2d;
+    }
+    .result-panel p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .questions{
+      margin-top:8px;
+    }
+
+    .question{
+      padding:12px;
+      border-radius:10px;
+      margin-bottom:10px;
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+      border: 1px solid rgba(10,30,50,0.04);
+    }
+
+    .q-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:8px;
+      margin-bottom:10px;
+    }
+
+    .q-text{
+      font-weight:600;
+      font-size:15px;
+      color:#083142;
+    }
+    .q-num{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* OPTION LAYOUT: two across, each half width (shorter) */
+    .options{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .option{
+      box-sizing:border-box;
+      width:48%;               /* <- độ dài ngắn lại 1/2 so với full width (2 items/row) */
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid rgba(5,40,60,0.06);
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      user-select:none;
+      background:#fafafa;
+      transition: all .15s ease;
+      font-size:14px;
+    }
+
+    .option input[type="radio"]{
+      accent-color: #0b6b3a;
+      transform: scale(1.05);
+    }
+
+    .option:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(9,30,50,0.04);
+    }
+
+    .option.small{
+      font-size:13px;
+      padding:9px 10px;
+    }
+
+    /* After submit: states */
+    .option.correct{
+      background: rgba(11,107,58,0.12);
+      border-color: rgba(11,107,58,0.22);
+    }
+    .option.incorrect{
+      background: rgba(255,92,92,0.10);
+      border-color: rgba(255,92,92,0.22);
+    }
+
+    .answer-label{
+      font-weight:500;
+      color:#073b2d;
+    }
+    .small-note{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    footer.actions{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:16px;
+      gap:12px;
+    }
+
+    .btn{
+      background:#073b2d;
+      color:white;
+      padding:10px 16px;
+      border-radius:10px;
+      border:none;
+      cursor:pointer;
+      font-weight:600;
+      box-shadow: 0 6px 18px rgba(7,59,45,0.12);
+    }
+    .btn.secondary{
+      background:transparent;
+      color:#073b2d;
+      border:1px solid rgba(7,59,45,0.08);
+      box-shadow:none;
+    }
+
+    .top-right-note{
+      position:fixed;
+      right:18px;
+      top:18px;
+      font-size:13px;
+      color:var(--note-pink);
+      font-weight:600;
+      background: rgba(255,102,178,0.06);
+      padding:6px 10px;
+      border-radius:8px;
+      box-shadow: 0 6px 14px rgba(255,102,178,0.06);
+      pointer-events:none;
+    }
+
+    .score-summary{
+      margin-top:12px;
+      padding:12px;
+      border-radius:8px;
+      background: linear-gradient(90deg, rgba(11,107,58,0.06), rgba(11,107,58,0.02));
+      display:none;
+    }
+
+    .score-summary.show{ display:block; }
+
+    .correct-mark{
+      display:inline-block;
+      margin-left:8px;
+      color: var(--accent);
+      font-weight:700;
+    }
+
+    .correct-answer-note{
+      color:var(--accent);
+      font-weight:600;
+      font-size:13px;
+      margin-left:8px;
+    }
+
+    @media (max-width:720px){
+      .option{ width:100%; }
+      .result-panel{ min-width:auto; width:100%; margin-bottom:10px; }
+      .top-row{ flex-direction:column; align-items:stretch;}
+    }
+  </style>
+</head>
+<body>
+  <div class="top-right-note">Kiều Ninh</div>
+
+  <div class="container">
+    <header class="app-header">
+      <h1 class="title">TRẮC NGHIỆM TIN HỌC 8 – GIỮA KÌ 1</h1>
+      <div class="subtitle">Làm bài trực tiếp, bấm "Nộp bài" để chấm điểm. Nền xanh da trời, giao diện gọn.</div>
+    </header>
+
+    <main class="card" role="main">
+      <div class="top-row">
+        <div class="result-panel" id="resultPanel">
+          <h3>Kết quả</h3>
+          <p id="resultText">Chưa có kết quả — Hãy hoàn thành bài và bấm "Nộp bài".</p>
+        </div>
+        <div class="small-note">Tổng câu: <strong>51</strong> &nbsp;·&nbsp; Điểm hệ 10 (làm tròn 1 chữ số thập phân)</div>
+      </div>
+
+      <form id="quizForm" class="questions" autocomplete="off">
+        <!-- Questions will be injected here by JS -->
+      </form>
+
+      <footer class="actions">
+        <div>
+          <button id="submitBtn" class="btn">Nộp bài</button>
+          <button id="resetBtn" class="btn secondary" style="margin-left:10px;">Làm lại</button>
+        </div>
+        <div class="small-note">Giao diện: ô đáp án rút gọn (2 cột). Đáp án đúng màu xanh, sai màu đỏ.</div>
+      </footer>
+
+      <div id="scoreBox" class="score-summary" aria-live="polite"></div>
+    </main>
+  </div>
+
+  <script>
+    // === Questions data (51 câu). Mỗi object {q, choices: {A..D}, answer: 'A'|'B'..} ===
+    const QUESTIONS = [
+      { q: "Hãy sắp xếp các thế hệ công cụ tính toán sau theo thứ tự thời gian: (Máy tính thủ công → Máy tính cơ học → Máy tính điện tử).", 
+        choices: { A: "a → c → b.", B: "a → b → c.", C: "c → b → a.", D: "b → c → a." }, answer: "D" },
+
+      { q: "Máy tính trong dự án của Babbage có những đặc điểm gì?", 
+        choices: { A: "Máy tính cơ học, thực hiện tự động.", B: "Máy tính có những ứng dụng ngoài tính toán thuần túy.", C: "Có thiết kế giống với máy tính ngày nay.", D: "Cả ba đặc điểm trên." }, answer: "D" },
+
+      { q: "Bộ vi xử lí là linh kiện máy tính dựa trên công nghệ nào?", 
+        choices: { A: "Linh kiện bán dẫn đơn giản.", B: "Mạch tích hợp hàng chục, hàng trăm linh kiện bán dẫn.", C: "Đèn điện tử chân không.", D: "Mạch tích hợp cỡ lớn, gồm hàng chục nghìn đến hàng triệu linh kiện bán dẫn." }, answer: "D" },
+
+      { q: "Thành phần điện tử chính trong máy tính thế hệ thứ ba là loại linh kiện điện tử nào?", 
+        choices: { A: "Đèn điện tử chân không.", B: "Bóng bán dẫn.", C: "Mạch tích hợp cỡ.", D: "Mạch tích hợp." }, answer: "D" },
+
+      { q: "Linh kiện điện tử là thành phần điện tử chính trong máy tính điện tử thế hệ thứ tư là:", 
+        choices: { A: "Phương án A", B: "Phương án B", C: "Phương án C", D: "Vi xử lí / Mạch tích hợp cỡ rất lớn (VLSI)." }, answer: "D" },
+
+      { q: "Phát biểu “Thông tin số khó bị xóa bỏ hoàn toàn” có đúng không? Tại sao?", 
+        choices: { A: "Sai — tệp/thư mục dễ bị xóa.", B: "Đúng — vì sau khi xóa, vẫn lưu ở thùng rác.", C: "Sai — thông tin số không giống tờ giấy.", D: "Đúng — vì không xác định được tất cả nơi nó được sao chép và lưu trữ." }, answer: "D" },
+
+      { q: "Thông tin số có thể được truy cập như thế nào?", 
+        choices: { A: "Không thể truy cập từ xa dù được quản lí cho phép.", B: "Không thể truy cập từ xa nên không cần sự đồng ý.", C: "Có thể truy cập từ xa nếu được sự đồng ý của người quản lí.", D: "Có thể truy cập từ xa mà không cần sự đồng ý." }, answer: "C" },
+
+      { q: "Hành động nào sau đây dùng để đánh giá một bài báo trực tuyến có đáng tin cậy hay không?", 
+        choices: { A: "Chia sẻ trước khi đọc.", B: "Đọc và cố gắng chứng thực thông tin.", C: "Mặc nhiên cho rằng bài báo thiên vị.", D: "Tin tưởng cho đến phát hiện sai lệch." }, answer: "B" },
+
+      { q: "Thông tin trong môi trường số đáng tin cậy ở mức độ nào?", 
+        choices: { A: "Mức độ rất khác nhau, từ sai lệch đến đáng tin.", B: "Chủ yếu là bịa đặt.", C: "Hoàn toàn đúng.", D: "Luôn có người chịu trách nhiệm." }, answer: "A" },
+
+      { q: "Khi nhận được thông báo khẩn tạm nghỉ, em có thể tìm hiểu thêm bằng cách nào?", 
+        choices: { A: "Quan sát, tìm chứng cứ từ nguồn khác.", B: "Kiểm tra trang web trường & gọi xác nhận.", C: "Kiểm tra người gửi và vai trò.", D: "Tất cả các phương án trên." }, answer: "D" },
+
+      { q: "Máy tính được Babbage thiết kế để làm gì?", 
+        choices: { A: "Thực hiện phép cộng.", B: "Có thể tính toán ngoài bốn phép tính.", C: "Thực hiện phép cộng trừ.", D: "Thực hiện bốn phép tính số học." }, answer: "D" },
+
+      { q: "Thành phần điện tử chính trong máy tính thế hệ thứ nhất là loại linh kiện điện tử nào?", 
+        choices: { A: "Bóng bán dẫn.", B: "Mạch tích hợp.", C: "Đèn điện tử chân không.", D: "Mạch tích hợp cỡ rất lớn." }, answer: "C" },
+
+      { q: "Thành phần điện tử chính trong máy tính thế hệ thứ hai là loại linh kiện điện tử nào?", 
+        choices: { A: "Đèn điện tử chân không.", B: "Mạch tích hợp.", C: "Bóng bán dẫn.", D: "Mạch tích hợp cỡ." }, answer: "C" },
+
+      { q: "Thế hệ máy tính nào bắt đầu sử dụng bàn phím và màn hình?", 
+        choices: { A: "Thế hệ thứ ba.", B: "Thế hệ thứ nhất.", C: "Thế hệ thứ tư.", D: "Thế hệ thứ hai." }, answer: "A" },
+
+      { q: "Linh kiện điện tử là thành phần chính trong máy tính thế hệ thứ năm:", 
+        choices: { A: "Phương án A", B: "Phương án B", C: "Phương án C", D: "Mạch tích hợp cỡ rất lớn & công nghệ AI." }, answer: "D" },
+
+      { q: "Chọn phương án nêu ba đặc điểm của thông tin số.", 
+        choices: { A: "Sao chép chậm, khó lan truyền, khó bị xóa.", B: "Sao chép nhanh, dễ lan truyền, khó bị xóa hoàn toàn.", C: "Sao chép chậm, dễ lan truyền, dễ xóa.", D: "Sao chép nhanh, khó lan truyền, dễ xóa." }, answer: "B" },
+
+      { q: "Trong môi trường kĩ thuật số, thông tin được thu thập và lưu trữ như thế nào?", 
+        choices: { A: "Thu chậm, lưu trữ dung lượng lớn.", B: "Thu nhanh, lưu trữ nhỏ.", C: "Thu chậm và cân nhắc.", D: "Thu nhanh và lưu trữ với dung lượng lớn." }, answer: "D" },
+
+      { q: "Thông tin số được nhiều tổ chức và cá nhân lưu trữ với dung lượng lớn, ...", 
+        choices: { A: "được bảo hộ quyền tác giả và có độ tin cậy khác nhau.", B: "được bảo hộ quyền tác giả và rất đáng tin cậy.", C: "được bảo hộ quyền tác giả và không đáng tin cậy.", D: "phương án D." }, answer: "A" },
+
+      { q: "Nhận được tin khẩn tạm nghỉ ở mạng xã hội, em sẽ hành động như thế nào?", 
+        choices: { A: "Chia sẻ ngay.", B: "Đợi người khác.", C: "Không chia sẻ vì không chắc.", D: "Chia sẻ để hợp tác." }, answer: "C" },
+
+      { q: "Sau khi vô tình chia sẻ tin giả, em nên làm gì?", 
+        choices: { A: "Xóa bài và viết lời giải thích.", B: "Tiếp tục chia sẻ tương tự.", C: "Giữ bài để xem tương tác.", D: "Không làm gì." }, answer: "A" },
+
+      { q: "Công cụ tìm kiếm, xử lí và trao đổi thông tin trong môi trường số bao gồm những gì?", 
+        choices: { A: "Internet, trình duyệt, máy tìm kiếm và ứng dụng từ điển.", B: "Phần mềm soạn thảo văn bản, bảng tính và trình chiếu.", C: "Phần mềm xử lí hình ảnh, âm thanh, video và ngôn ngữ tự nhiên.", D: "Tất cả các công cụ trên." }, answer: "D" },
+
+      { q: "Từ khóa tốt nhất để tìm lịch sử 'punched cards' là?", 
+        choices: { A: "bộ nhớ máy dệt bìa đục lỗ.", B: "\"bộ nhớ\" \"máy dệt\" \"bìa đục lỗ\".", C: "\"punched cards\" \"data storage\".", D: "\"punched cards\" \"lịch sử bộ nhớ\"." }, answer: "C" },
+
+      { q: "Từ nào xuất hiện nhiều nhất cùng với 'tìm kiếm' (thuật ngữ tra cứu trên Internet)?", 
+        choices: { A: "Trang web.", B: "Từ khóa.", C: "Báo cáo.", D: "Biểu mẫu." }, answer: "B" },
+
+      { q: "Phát biểu nào sau đây là đúng?", 
+        choices: { A: "Bất cứ ai cũng có thể xuất bản thông tin trên Internet.", B: "Bạn không nên tin bất cứ điều gì đọc trực tuyến.", C: "Không cần kiểm tra lại tin tức.", D: "Chỉ có hai loại thông tin hoàn toàn đúng hoặc bịa đặt." }, answer: "A" },
+
+      { q: "Ví dụ nào nói về thông tin có độ tin cậy thấp?", 
+        choices: { A: "Bảng xếp hạng doanh thu âm nhạc.", B: "Bài bình luận về một CD âm nhạc.", C: "Một bộ sưu tập các bản nhạc cũ.", D: "Giá bán một CD âm nhạc thời xưa." }, answer: "B" },
+
+      { q: "Nguồn thông tin đáng tin cậy nhất để kiểm tra tin tức đang lan truyền là?", 
+        choices: { A: "Trang có địa chỉ .gov.vn", B: "Trang có nội dung giống suy nghĩ của em", C: "Trang có nội dung gây xúc động", D: "Trang fan" }, answer: "A" },
+
+      { q: "Hoạt động nào có thể khiến sử dụng công nghệ vi phạm đạo đức, pháp luật hoặc thiếu văn hóa?", 
+        choices: { A: "Sử dụng máy tính để soạn đơn xin việc.", B: "Vẽ biểu đồ bằng phần mềm.", C: "Truy cập mạng xã hội và viết bình luận (có thể gây tranh cãi).", D: "Mở phần mềm calculator." }, answer: "C" },
+
+      { q: "Sử dụng điện thoại thông minh để hành động nào vi phạm đạo đức, pháp luật?", 
+        choices: { A: "Hỏi bài qua Zalo.", B: "Gọi hỏi thăm ông bà.", C: "Chụp ảnh món ăn.", D: "Quay video ở nơi cấm quay." }, answer: "D" },
+
+      { q: "Hành động nào là biểu hiện vi phạm đạo đức, pháp luật và thiếu văn hóa?", 
+        choices: { A: "Chụp ảnh chú chó nhỏ nhà em.", B: "Chụp ảnh nơi có biển không cho phép.", C: "Chụp ảnh phong cảnh.", D: "Chụp ảnh hiệu sách em hay mua." }, answer: "B" },
+
+      { q: "Khi cần sử dụng một hình ảnh trên Internet để làm bài tập, phương án thích hợp là:", 
+        choices: { A: "Sử dụng mà không làm gì.", B: "Sử dụng và ghi rõ nguồn.", C: "Xin phép chủ sở hữu hoặc mua bản quyền.", D: "Mua bản quyền." }, answer: "B" },
+
+      { q: "Khi dùng hình ảnh để in vào sách, cần:", 
+        choices: { A: "Sử dụng mà không làm gì.", B: "Ghi rõ nguồn.", C: "Xin phép tác giả/chủ sở hữu hoặc mua bản quyền.", D: "Xin phép trang web đăng." }, answer: "C" },
+
+      { q: "Hành động nào không vi phạm đạo đức, pháp luật và văn hóa?", 
+        choices: { A: "Đăng thơ của nhà thơ nổi tiếng và ghi là mình.", B: "Bình luận phản cảm trên Facebook.", C: "Tải hình minh họa cho bài tập.", D: "Chép văn từ Internet." }, answer: "C" },
+
+      { q: "Hành động nào không vi phạm đạo đức và pháp luật?", 
+        choices: { A: "Tải bài trình chiếu người khác và dùng như của mình.", B: "Đăng thông tin sai.", C: "Ghi âm trái phép.", D: "Mua đĩa nhạc có bản quyền và tặng." }, answer: "D" },
+
+      { q: "Nếu ảnh của em bị đăng với tên tác giả là bạn em, em sẽ làm gì?", 
+        choices: { A: "Liên lạc và yêu cầu ghi đúng nguồn.", B: "Không làm gì.", C: "Báo cáo thầy cô.", D: "Nói cho mọi người biết." }, answer: "A" },
+
+      { q: "Linh kiện điện tử là thành phần chính trong máy tính thế hệ thứ nhất là:", 
+        choices: { A: "Phương án A", B: "Phương án B", C: "Đèn điện tử chân không.", D: "Phương án D" }, answer: "C" },
+
+      { q: "Linh kiện điện tử là thành phần chính trong máy tính thế hệ thứ ba là:", 
+        choices: { A: "Phương án A", B: "Phương án B", C: "Phương án C", D: "Mạch tích hợp." }, answer: "D" },
+
+      { q: "Linh kiện điện tử là thành phần chính trong máy tính thế hệ thứ hai là:", 
+        choices: { A: "Phương án A", B: "Phương án B", C: "Bóng bán dẫn.", D: "Phương án D" }, answer: "C" },
+
+      { q: "Trải qua nhiều giai đoạn, máy tính điện tử có thể được phân chia thành mấy thế hệ?", 
+        choices: { A: "6", B: "5", C: "4", D: "3" }, answer: "B" },
+
+      { q: "Hình bên là hình ảnh của (không có hình trong nguồn).", 
+        choices: { A: "bàn tính.", B: "máy tính điện - cơ.", C: "Pascaline (máy tính cơ học đầu tiên).", D: "máy tính đa năng của Babbage." }, answer: "C" },
+
+      { q: "“Thông tin số có thể được … từ xa nếu người quản lí thông tin đó cho phép”. Điền từ phù hợp:", 
+        choices: { A: "truy cập.", B: "xóa bỏ.", C: "lan truyền.", D: "nhân bản." }, answer: "A" },
+
+      { q: "“Thông tin số dễ dàng được … nhưng khó bị xóa bỏ hoàn toàn”. Điền từ phù hợp:", 
+        choices: { A: "nhân bản.", B: "nhân bản và lan truyền.", C: "truy cập và lan truyền.", D: "lan truyền." }, answer: "A" },
+
+      { q: "Các lưu ý để tránh vi phạm khi sử dụng công nghệ kĩ thuật số là gì?", 
+        choices: { A: "Tìm hiểu thông tin và trang bị kiến thức.", B: "Chỉ sử dụng khi được phép/tác giả cho.", C: "Hầu hết thông tin Internet có bản quyền.", D: "Cả ba lưu ý trên." }, answer: "D" },
+
+      { q: "“Cần đảm bảo tính …, thể hiện được … và tuân thủ … khi tạo ra sản phẩm số” — chọn phương án thích hợp:", 
+        choices: { A: "văn hóa / pháp luật / đạo đức.", B: "pháp luật / văn hóa / đạo đức.", C: "văn hóa / đạo đức / pháp luật.", D: "đạo đức / văn hóa / pháp luật." }, answer: "C" },
+
+      { q: "Biểu hiện vi phạm đạo đức, pháp luật hay thiếu văn hóa khi sử dụng công nghệ kỹ thuật số là:", 
+        choices: { A: "Không ghi âm trái phép.", B: "Không chụp ảnh nơi không cho phép.", C: "Phát trực tiếp hoặc chia sẻ vụ bạo lực học đường.", D: "Không dùng phần mềm bẻ khóa." }, answer: "C" },
+
+      { q: "Tuân thủ quy định về đạo đức, văn hóa, pháp luật khi tạo sản phẩm số gồm:", 
+        choices: { A: "Chỉ dùng phần mềm có bản quyền.", B: "Chia sẻ thông tin lành mạnh.", C: "Dùng từ ngữ lành mạnh khi viết bình luận.", D: "Cả ba quy định trên." }, answer: "D" },
+
+      { q: "Trong lĩnh vực y tế, thiết bị nhỏ gọn nào có thể theo dõi sức khỏe thường xuyên?", 
+        choices: { A: "Máy đo nhiệt độ.", B: "Đồng hồ thông minh.", C: "Đồng hồ.", D: "Máy đo đường huyết." }, answer: "B" },
+
+      { q: "Trong lĩnh vực quốc phòng, thiết bị nào hỗ trợ quan sát vùng trời, biển, lãnh thổ?", 
+        choices: { A: "Khinh khí cầu.", B: "Camera an ninh.", C: "Máy bay.", D: "Thiết bị bay thông minh." }, answer: "C" },
+
+      { q: "Trong lĩnh vực an toàn xã hội, thiết bị nào thu nhận thông tin nơi công cộng để phát hiện vi phạm?", 
+        choices: { A: "Camera an ninh.", B: "Kính thông minh.", C: "Điện thoại thông minh.", D: "Máy ảnh số." }, answer: "A" },
+
+      { q: "Nguồn thông tin cần tham khảo nhất để tìm hiểu cách dùng một máy ảnh mới là:", 
+        choices: { A: "Hướng dẫn của người đã chụp.", B: "Hướng dẫn sử dụng của nhà sản xuất.", C: "Câu trả lời diễn đàn.", D: "Hướng dẫn của người giỏi Tin học." }, answer: "B" },
+
+      { q: "Nguồn thông tin đáng tin cậy nhất để tìm hiểu về một đội bóng châu Á là:", 
+        choices: { A: "Diễn đàn bóng đá Việt Nam.", B: "Câu lạc bộ người hâm mộ.", C: "Liên đoàn bóng đá châu Á.", D: "Câu lạc bộ đội bóng đối thủ." }, answer: "C" },
+
+      { q: "Đâu không là sản phẩm số? (nguồn cho biết tất cả các lựa chọn đều là sản phẩm số)", 
+        choices: { A: "Thiết kế game Scratch.", B: "Bài đăng trên mạng xã hội.", C: "Bài thuyết trình PowerPoint.", D: "Video âm nhạc." }, answer: "D" }
+    ];
+
+    // === Build the form dynamically ===
+    const form = document.getElementById('quizForm');
+    QUESTIONS.forEach((item, idx) => {
+      const qIdx = idx + 1;
+      const qWrap = document.createElement('div');
+      qWrap.className = 'question';
+      qWrap.id = 'q' + qIdx;
+
+      const head = document.createElement('div');
+      head.className = 'q-head';
+      head.innerHTML = `<div class="q-text"><span style="color:var(--muted);font-weight:600;margin-right:8px">Câu ${qIdx}.</span>${item.q}</div>
+                        <div class="q-num small-note">#${qIdx}</div>`;
+
+      const options = document.createElement('div');
+      options.className = 'options';
+
+      for (const key of ['A','B','C','D']) {
+        const opt = document.createElement('label');
+        opt.className = 'option small';
+        opt.setAttribute('data-choice', key);
+
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'q' + qIdx;
+        radio.value = key;
+        radio.id = `q${qIdx}_${key}`;
+
+        const labelText = document.createElement('div');
+        labelText.innerHTML = `<span class="answer-label">${key}.</span>&nbsp;<span style="margin-left:6px">${item.choices[key] || ''}</span>`;
+
+        opt.appendChild(radio);
+        opt.appendChild(labelText);
+        options.appendChild(opt);
+
+        // clicking whole label should check radio
+        opt.addEventListener('click', (e)=>{
+          if(e.target.tagName !== 'INPUT') radio.checked = true;
+        });
+      }
+
+      qWrap.appendChild(head);
+      qWrap.appendChild(options);
+      form.appendChild(qWrap);
+    });
+
+    // === Logic for submit and grading ===
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const resultText = document.getElementById('resultText');
+    const scoreBox = document.getElementById('scoreBox');
+
+    function gradeQuiz(){
+      let correctCount = 0;
+      QUESTIONS.forEach((item, idx) => {
+        const qIdx = idx + 1;
+        const chosen = document.querySelector(`input[name="q${qIdx}"]:checked`);
+        const qEl = document.getElementById('q' + qIdx);
+        // clear previous states
+        qEl.querySelectorAll('.option').forEach(o => {
+          o.classList.remove('correct','incorrect');
+          // remove any appended correct-answer-note
+          const extra = o.querySelector('.correct-answer-note');
+          if(extra) extra.remove();
+        });
+
+        const correct = item.answer;
+        if(chosen){
+          const val = chosen.value;
+          if(val === correct) {
+            correctCount++;
+            // mark the chosen option as correct
+            const chosenLabel = qEl.querySelector(`.option[data-choice="${val}"]`);
+            if(chosenLabel) chosenLabel.classList.add('correct');
+            // also visually mark other options normally (we keep them neutral)
+          } else {
+            // mark chosen as incorrect
+            const chosenLabel = qEl.querySelector(`.option[data-choice="${val}"]`);
+            if(chosenLabel) chosenLabel.classList.add('incorrect');
+            // highlight the correct option
+            const corrLabel = qEl.querySelector(`.option[data-choice="${correct}"]`);
+            if(corrLabel) corrLabel.classList.add('correct');
+            // add small note indicating correct answer text
+            if(corrLabel){
+              const note = document.createElement('span');
+              note.className = 'correct-answer-note';
+              note.textContent = `Đáp án đúng: ${correct}.`;
+              // attach to corrLabel if not already
+              if(!corrLabel.querySelector('.correct-answer-note')) {
+                corrLabel.appendChild(note);
+              }
+            }
+          }
+        } else {
+          // No choice selected: mark correct option in green and leave others neutral
+          const corrLabel = qEl.querySelector(`.option[data-choice="${correct}"]`);
+          if(corrLabel) corrLabel.classList.add('correct');
+          // optionally show note if no answer
+        }
+      });
+
+      // calculate score on scale 10, rounded to 1 decimal
+      const total = QUESTIONS.length;
+      const rawScore = (correctCount / total) * 10;
+      const displayScore = Math.round(rawScore * 10) / 10;
+
+      // update result panel and scoreBox
+      resultText.innerHTML = `Bạn đúng <strong>${correctCount}</strong> / ${total} câu. Điểm: <strong>${displayScore}</strong> / 10`;
+      scoreBox.classList.add('show');
+      scoreBox.innerHTML = `
+        <div><strong>Kết quả chi tiết</strong></div>
+        <div style="margin-top:8px">Bạn đúng <strong>${correctCount}</strong> câu trên <strong>${total}</strong> câu.</div>
+        <div>Điểm: <strong>${displayScore}</strong> / 10</div>
+      `;
+
+      // scroll to top of results
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    submitBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      gradeQuiz();
+      // disable inputs after submit to prevent accidental change
+      document.querySelectorAll('input[type=radio]').forEach(r => r.disabled = true);
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = 0.85;
+    });
+
+    resetBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      // clear all radios
+      document.querySelectorAll('input[type=radio]').forEach(r => { r.checked = false; r.disabled = false; });
+      // clear classes
+      document.querySelectorAll('.option').forEach(o => o.classList.remove('correct','incorrect'));
+      // remove notes
+      document.querySelectorAll('.correct-answer-note').forEach(n => n.remove());
+      // reset result texts
+      resultText.innerHTML = 'Chưa có kết quả — Hãy hoàn thành bài và bấm "Nộp bài".';
+      scoreBox.classList.remove('show');
+      scoreBox.innerHTML = '';
+      submitBtn.disabled = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
+add quiz app
